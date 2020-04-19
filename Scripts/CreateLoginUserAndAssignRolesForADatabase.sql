@@ -5,32 +5,30 @@ IF NOT EXISTS
 (
     SELECT name
     FROM sys.sysusers
-    WHERE name = 'testuser'
+    WHERE name = 'testLogin'
 )
 BEGIN
-    CREATE LOGIN [testuser]
-    WITH PASSWORD = N'testuser123@'
+    CREATE LOGIN [testLogin]
+    WITH PASSWORD = N'testlogin123@'
        , DEFAULT_DATABASE = [master];
 END;
 
-USE [abcd];
+USE [testDatabase];
 GO
 
 IF NOT EXISTS
 (
     SELECT [name]
     FROM sys.database_principals
-    WHERE name = N'testuser'
+    WHERE name = N'testUser'
 )
 BEGIN
-    CREATE USER [testuser] FOR LOGIN [testuser];
+    CREATE USER [testUser] FOR LOGIN [testLogin];
 END;
 
 IF DATABASE_PRINCIPAL_ID('db_executor') IS NULL
 BEGIN
     CREATE ROLE db_executor;
-    GRANT EXECUTE
-    TO  db_executor;
 END;
 GO
 
@@ -42,13 +40,13 @@ END;
 GO
 
 EXEC sp_addrolemember @rolename = N'db_datareader'
-                    , @membername = N'testuser';
+                    , @membername = N'testUser';
 GO
 
 EXEC sp_addrolemember @rolename = N'db_datawriter'
-                    , @membername = N'testuser';
+                    , @membername = N'testUser';
 GO
 
 EXEC sp_addrolemember @rolename = N'db_executor'
-                    , @membername = N'testuser';
+                    , @membername = N'testUser';
 GO
